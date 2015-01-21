@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="SBT: org.openrdf.sesame:sesame-queryalgebra-evaluation:2.7.10:jar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.ivy2/cache/org.openrdf.sesame/sesame-queryalgebra-evaluation/jars/sesame-queryalgebra-evaluation-2.7.10.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.ivy2/cache/org.openrdf.sesame/sesame-queryalgebra-evaluation/docs/sesame-queryalgebra-evaluation-2.7.10-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.ivy2/cache/org.openrdf.sesame/sesame-queryalgebra-evaluation/srcs/sesame-queryalgebra-evaluation-2.7.10-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

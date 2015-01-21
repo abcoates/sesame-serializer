@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="SBT: org.openrdf.sesame:sesame-query:2.7.10:jar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.ivy2/cache/org.openrdf.sesame/sesame-query/jars/sesame-query-2.7.10.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.ivy2/cache/org.openrdf.sesame/sesame-query/docs/sesame-query-2.7.10-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.ivy2/cache/org.openrdf.sesame/sesame-query/srcs/sesame-query-2.7.10-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

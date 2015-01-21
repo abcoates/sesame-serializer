@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="SBT: org.openrdf.sesame:sesame-rio-trig:2.7.10:jar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.ivy2/cache/org.openrdf.sesame/sesame-rio-trig/jars/sesame-rio-trig-2.7.10.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.ivy2/cache/org.openrdf.sesame/sesame-rio-trig/docs/sesame-rio-trig-2.7.10-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.ivy2/cache/org.openrdf.sesame/sesame-rio-trig/srcs/sesame-rio-trig-2.7.10-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="SBT: org.openrdf.sesame:sesame-rio-rdfjson:2.7.14:jar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.ivy2/cache/org.openrdf.sesame/sesame-rio-rdfjson/jars/sesame-rio-rdfjson-2.7.14.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.ivy2/cache/org.openrdf.sesame/sesame-rio-rdfjson/docs/sesame-rio-rdfjson-2.7.14-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.ivy2/cache/org.openrdf.sesame/sesame-rio-rdfjson/srcs/sesame-rio-rdfjson-2.7.14-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
