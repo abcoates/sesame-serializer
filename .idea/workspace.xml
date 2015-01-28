@@ -2,56 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ccd52307-a3dc-48c7-9c59-9a08e4fe9ceb" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/dictionaries/Anthony.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/test/scala/org/contakt/data/semweb/sesame/SesameRioSpec.scala" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_http_client_2_7_10_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_http_protocol_2_7_10_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_model_2_7_10_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_query_2_7_10_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_queryalgebra_evaluation_2_7_10_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_queryalgebra_model_2_7_10_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_queryparser_api_2_7_10_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_queryparser_serql_2_7_10_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_queryparser_sparql_2_7_10_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_queryresultio_api_2_7_10_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_queryresultio_binary_2_7_10_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_queryresultio_sparqljson_2_7_10_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_queryresultio_sparqlxml_2_7_10_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_queryresultio_text_2_7_10_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_repository_api_2_7_10_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_repository_contextaware_2_7_10_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_repository_dataset_2_7_10_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_repository_event_2_7_10_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_repository_http_2_7_10_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_repository_sail_2_7_10_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_repository_sparql_2_7_10_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_rio_api_2_7_10_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_rio_binary_2_7_10_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_rio_datatypes_2_7_10_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_rio_languages_2_7_10_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_rio_n3_2_7_10_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_rio_nquads_2_7_10_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_rio_ntriples_2_7_10_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_rio_rdfjson_2_7_10_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_rio_rdfxml_2_7_10_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_rio_trig_2_7_10_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_rio_trix_2_7_10_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_rio_turtle_2_7_10_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_runtime_2_7_10_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_sail_api_2_7_10_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_sail_federation_2_7_10_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_sail_inferencer_2_7_10_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_sail_memory_2_7_10_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_sail_nativerdf_2_7_10_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_sail_rdbms_2_7_10_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_util_2_7_10_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_scala_lang_modules_scala_parser_combinators_2_11_1_0_1_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_scala_lang_modules_scala_xml_2_11_1_0_1_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_scala_lang_scala_reflect_2_11_0_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_scalatest_scalatest_2_11_2_1_5_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_slf4j_slf4j_api_1_7_6_jar.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_slf4j_slf4j_log4j12_1_7_6_jar.xml" afterPath="" />
-      <change type="MOVED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_repository_manager_2_7_10_jar.xml" afterPath="$PROJECT_DIR$/.idea/libraries/SBT__org_openrdf_sesame_sesame_repository_manager_2_7_14_jar2.xml" />
+      <change type="DELETED" beforePath="C:\Users\Anthony\SkyDrive\Projects\sesame-serializer\.idea\libraries\SBT__org_openrdf_sesame_sesame_repository_manager_2_7_14_jar2.xml" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/scala/org/contakt/data/semweb/sesame/SesameRioSpec.scala" afterPath="$PROJECT_DIR$/src/test/scala/org/contakt/data/semweb/sesame/SesameRioSpec.scala" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules/sesame-serializer-build.iml" afterPath="$PROJECT_DIR$/.idea/modules/sesame-serializer-build.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules/sesame-serializer.iml" afterPath="$PROJECT_DIR$/.idea/modules/sesame-serializer.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
@@ -87,7 +39,20 @@
     <favorites_list name="sesame-serializer" />
   </component>
   <component name="FileEditorManager">
-    <leaf />
+    <leaf>
+      <file leaf-file-name="SesameRioSpec.scala" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/test/scala/org/contakt/data/semweb/sesame/SesameRioSpec.scala">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.81578946" vertical-offset="1387" max-vertical-offset="3791">
+              <caret line="98" column="61" selection-start-line="98" selection-start-column="61" selection-end-line="98" selection-end-column="61" />
+              <folding>
+                <element signature="e#40#120#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -133,7 +98,7 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -141,10 +106,6 @@
               <option name="myItemId" value="scala-serializer" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="External Libraries" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
-            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -153,96 +114,12 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="sesame-serializer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="scala-serializer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="sesame-serializer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="test" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="scala-serializer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="sesame-serializer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="test" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="scala" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="sesame" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="scala-serializer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="sesame-serializer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="test" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="resources" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="turtle" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="scala-serializer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="sesame-serializer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -258,8 +135,8 @@
     <property name="FullScreen" value="false" />
     <property name="recentsLimit" value="5" />
     <property name="dynamic.classpath" value="false" />
-    <property name="project.structure.last.edited" value="Facets" />
-    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.last.edited" value="Libraries" />
+    <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
   </component>
   <component name="RunManager" selected="ScalaTest.ScalaTests in 'scala'">
@@ -427,6 +304,11 @@
       <method />
     </configuration>
     <configuration default="true" type="js.build_tools.gulp" factoryName="Gulp.js">
+      <node-options />
+      <gulpfile />
+      <tasks />
+      <pass-parent-envs>true</pass-parent-envs>
+      <envs />
       <method />
     </configuration>
     <configuration default="true" type="FlexUnitRunConfigurationType" factoryName="FlexUnit" appDescriptorForEmulator="Android" class_name="" emulatorAdlOptions="" method_name="" package_name="" scope="Class">
@@ -622,43 +504,48 @@
       <workItem from="1421829110398" duration="522000" />
       <workItem from="1421829973851" duration="1038000" />
       <workItem from="1421863283629" duration="7777000" />
+      <workItem from="1421962346712" duration="664000" />
+      <workItem from="1422293762986" duration="2751000" />
+      <workItem from="1422296629100" duration="2930000" />
+      <workItem from="1422346380152" duration="566000" />
+      <workItem from="1422466374572" duration="2824000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="9781000" />
+    <option name="totallyTimeSpent" value="19516000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="29" width="1296" height="699" extended-state="6" />
     <editor active="false" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="SBT Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.329806" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="SBT" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="SBT Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.329806" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.329806" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="SBT" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.329806" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32804233" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24959612" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24959612" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
@@ -680,7 +567,9 @@
     </option>
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager />
+    <breakpoint-manager>
+      <option name="time" value="1" />
+    </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="antWorkspaceConfiguration">
@@ -688,11 +577,40 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/src/test/scala/org/contakt/data/semweb/sesame/SesameRioSpec.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="100">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#40#120#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/scala/org/contakt/data/semweb/sesame/SesameRioSpec.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3264">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#40#120#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/scala/org/contakt/data/semweb/sesame/SesameRioSpec.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="100">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#40#120#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/build.sbt">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="100">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -706,21 +624,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/scala/org/contakt/data/semweb/sesame/SesameRioSpec.scala">
+    <entry file="file://$PROJECT_DIR$/build.sbt">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.627566" vertical-offset="1061" max-vertical-offset="1479">
-          <caret line="75" column="59" selection-start-line="75" selection-start-column="59" selection-end-line="75" selection-end-column="59" />
-          <folding>
-            <element signature="e#40#95#0" expanded="true" />
-          </folding>
+        <state vertical-scroll-proportion="0.46961325" vertical-offset="0" max-vertical-offset="543">
+          <caret line="15" column="0" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/build.sbt">
+    <entry file="file://$PROJECT_DIR$/src/test/scala/org/contakt/data/semweb/sesame/SesameRioSpec.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.720339" vertical-offset="0" max-vertical-offset="357">
-          <caret line="15" column="0" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
-          <folding />
+        <state vertical-scroll-proportion="0.81578946" vertical-offset="1387" max-vertical-offset="3791">
+          <caret line="98" column="61" selection-start-line="98" selection-start-column="61" selection-end-line="98" selection-end-column="61" />
+          <folding>
+            <element signature="e#40#120#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -753,7 +670,7 @@
       </state>
       <state key="GlobalLibrariesConfigurable.UI">
         <settings>
-          <last-edited>BaseX</last-edited>
+          <last-edited>scala-sdk-2.11.5</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
@@ -782,6 +699,7 @@
             <option name="proportions">
               <list>
                 <option value="0.2" />
+                <option value="0.6" />
               </list>
             </option>
           </splitter-proportions>
@@ -789,7 +707,7 @@
       </state>
       <state key="ProjectLibrariesConfigurable.UI">
         <settings>
-          <last-edited>SBT: com.fasterxml.jackson.core:jackson-core:2.2.1:jar</last-edited>
+          <last-edited>SBT: org.scala-lang:scala-library:2.11.5:jar</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
