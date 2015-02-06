@@ -142,6 +142,9 @@ public class SortedTurtleWriter extends RDFWriterBase {
     /** Hash map containing triple data. */
     private TurtleSubjectPredicateObjectMap tripleMap = null;
 
+    /** Predicates that are specially rendered before all others. */
+    private ArrayList<URI> firstPredicates = null;
+
     /** Comparator for Strings that shorts longer strings first. */
     private class StringLengthComparator implements Comparator<String> {
         @Override
@@ -260,6 +263,14 @@ public class SortedTurtleWriter extends RDFWriterBase {
     @Override
     public void endRDF() throws RDFHandlerException {
         try {
+            firstPredicates = new ArrayList<URI>(); // predicates that are specially rendered first
+            firstPredicates.add(rdfType);
+            firstPredicates.add(rdfsSubClassOf);
+            firstPredicates.add(rdfsSubPropertyOf);
+            firstPredicates.add(owlSameAs);
+            firstPredicates.add(rdfsLabel);
+            firstPredicates.add(rdfsComment);
+
             // Add default namespace prefixes, if they haven't yet been defined.  May fail if these prefixes have already been defined for different namespace URIs.
             addDefaultNamespacePrefixIfMissing(RDF_NS_URI, "rdf");
             addDefaultNamespacePrefixIfMissing(RDFS_NS_URI, "rdfs");
@@ -327,14 +338,6 @@ public class SortedTurtleWriter extends RDFWriterBase {
     }
 
     private void writeSubjectTriples(IndentingWriter out, Resource subject) throws Exception {
-        ArrayList<URI> firstPredicates = new ArrayList<URI>(); // predicates that are specially rendered first
-        firstPredicates.add(rdfType);
-        firstPredicates.add(rdfsSubClassOf);
-        firstPredicates.add(rdfsSubPropertyOf);
-        firstPredicates.add(owlSameAs);
-        firstPredicates.add(rdfsLabel);
-        firstPredicates.add(rdfsComment);
-
         TurtlePredicateObjectMap poMap = tripleMap.get(subject);
         QName qname = null; // try to write the subject out as a QName if possible.
         if (subject instanceof URI) {
@@ -449,7 +452,30 @@ public class SortedTurtleWriter extends RDFWriterBase {
     }
 
     private void writeObject(IndentingWriter out, BNode bnode) throws Exception {
-        out.write("[] "); // TODO: fix blank nodes
+        out.write("["); // TODO: how are BNodes sorted as objects?  Is it repeatable?
+        out.writeEOL();
+        out.increaseIndentation();
+
+        TurtlePredicateObjectMap poMap = tripleMap.get(bnode);
+
+        // Write predicate/object pairs rendered first.
+        for (URI predicate : firstPredicates) {
+            if (poMap.containsKey(predicate)) {
+                TurtleObjectList values = poMap.get(predicate);
+                writePredicateAndObjectValues(out, predicate, values);
+            }
+        }
+
+        // Write other predicate/object pairs.
+        for (URI predicate : poMap.keySet()) {
+            if (!firstPredicates.contains(predicate)) {
+                TurtleObjectList values = poMap.get(predicate);
+                writePredicateAndObjectValues(out, predicate, values);
+            }
+        }
+
+        out.decreaseIndentation();
+        out.write("] ");
     }
 
     private void writeObject(IndentingWriter out, URI uri) throws Exception {

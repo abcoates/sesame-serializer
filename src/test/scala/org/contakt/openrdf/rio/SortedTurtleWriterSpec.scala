@@ -49,11 +49,23 @@ class SortedTurtleWriterSpec extends FlatSpec with Matchers {
     val baseUri = new URIImpl("http://topbraid.org/countries")
     val outputFile = new File(outputDir, inputFile getName)
     val outStream = new FileOutputStream(outputFile)
-//    val outWriter = new OutputStreamWriter(outStream, "UTF8")
     val factory = new SortedTurtleWriterFactory()
-    val turtleWriter = factory getWriter (/*outWriter*/outStream, baseUri, null)
+    val turtleWriter = factory getWriter (outStream, baseUri, null)
 
     val inputModel = Rio parse (new FileReader(inputFile), baseUri stringValue, RDFFormat.TURTLE)
+    Rio write (inputModel, turtleWriter)
+    outStream flush ()
+    outStream close ()
+  }
+
+  it should "be able to produce a sorted Turtle file with blank object nodes" in {
+    val inputFile = new File("src/test/resources/turtle/raw/topquadrant-extended-turtle-example.ttl")
+    val outputFile = new File(outputDir, inputFile getName)
+    val outStream = new FileOutputStream(outputFile)
+    val factory = new SortedTurtleWriterFactory()
+    val turtleWriter = factory getWriter (outStream)
+
+    val inputModel = Rio parse (new FileReader(inputFile), "", RDFFormat.TURTLE)
     Rio write (inputModel, turtleWriter)
     outStream flush ()
     outStream close ()
