@@ -53,13 +53,126 @@ public class SortedTurtleWriter extends RDFWriterBase {
     /** owl:sameAs URL */
     private static final URI owlSameAs = new URIImpl(OWL_NS_URI + "sameAs");
 
+    /** Comparator for TurtleObjectList objects. */
+    private class TurtleObjectListComparator implements Comparator<TurtleObjectList> {
+        private ValueComparator valc = null;
+
+        @Override
+        public int compare(TurtleObjectList list1, TurtleObjectList list2) {
+            Iterator<Value> iter1 = list1.iterator();
+            Iterator<Value> iter2 = list2.iterator();
+            return compare(list1, iter1, list2, iter2);
+        }
+
+        private int compare(TurtleObjectList list1, Iterator<Value> iter1, TurtleObjectList list2, Iterator<Value> iter2) {
+            if (iter1.hasNext()) {
+                if (iter2.hasNext()) {
+                    Value value1 = iter1.next();
+                    Value value2 = iter2.next();
+                    if (valc == null) { valc = new ValueComparator(); }
+                    int cmp = valc.compare(value1, value2);
+                    if (cmp != 0) {
+                        return cmp;
+                    } else { // values are the same, try the next values in the lists
+                        return compare(list1, iter1, list2, iter2);
+                    }
+                } else { // only iter1 has a next value
+                    return 1; // map1 comes after map2
+                }
+            } else {
+                if (iter2.hasNext()) { // only iter2 has a next value
+                    return -1; // map1 comes before map2
+                } else { // both iterators have no next value
+                    return 0;
+                }
+            }
+        }
+    }
+
+    /** Comparator for TurtlePredicateObjectMap objects. */
+    private class TurtlePredicateObjectMapComparator implements Comparator<TurtlePredicateObjectMap> {
+        private URIComparator uric = null;
+        private TurtleObjectListComparator tolc = null;
+
+        @Override
+        public int compare(TurtlePredicateObjectMap map1, TurtlePredicateObjectMap map2) {
+            Iterator<URI> iter1 = map1.keySet().iterator();
+            Iterator<URI> iter2 = map2.keySet().iterator();
+            return compare(map1, iter1, map2, iter2);
+        }
+
+        private int compare(TurtlePredicateObjectMap map1, Iterator<URI> iter1, TurtlePredicateObjectMap map2, Iterator<URI> iter2) {
+            if (iter1.hasNext()) {
+                if (iter2.hasNext()) {
+                    URI key1 = iter1.next();
+                    URI key2 = iter2.next();
+                    if (uric == null) { uric = new URIComparator(); }
+                    int cmp = uric.compare(key1, key2);
+                    if (cmp != 0) {
+                        return cmp;
+                    } else { // predicate keys are the same, so test object values
+                        TurtleObjectList values1 = map1.get(key1);
+                        TurtleObjectList values2 = map2.get(key2);
+                        if (tolc == null) { tolc = new TurtleObjectListComparator(); }
+                        cmp = tolc.compare(values1, values2);
+                        if (cmp != 0) {
+                            return cmp;
+                        } else { // values are the same, try the next predicates in the maps
+                            return compare(map1, iter1, map2, iter2);
+                        }
+                    }
+                } else { // only iter1 has a next value
+                    return 1; // map1 comes after map2
+                }
+            } else {
+                if (iter2.hasNext()) { // only iter2 has a next value
+                    return -1; // map1 comes before map2
+                } else { // both iterators have no next value
+                    return 0;
+                }
+            }
+        }
+    }
+
+    /** Comparator for Sesame BNode objects. */
+    private class BNodeComparator implements Comparator<BNode> {
+        private TurtlePredicateObjectMapComparator tpomc = null;
+
+        @Override
+        public int compare(BNode bnode1, BNode bnode2) {
+            if (bnode1 == null) { throw new NullPointerException("cannot compare null to BNode"); }
+            if (bnode2 == null) { throw new NullPointerException("cannot compare BNode to null"); }
+            TurtlePredicateObjectMap map1 = tripleMap.get(bnode1);
+            TurtlePredicateObjectMap map2 = tripleMap.get(bnode2);
+            if (tpomc == null) { tpomc = new TurtlePredicateObjectMapComparator(); }
+            return tpomc.compare(map1, map2);
+        }
+    }
+
     /** Comparator for Sesame Value objects. */
     private class ValueComparator implements Comparator<Value> {
+        private BNodeComparator bnc = null;
+
         @Override
         public int compare(Value value1, Value value2) {
             if (value1 == null) { throw new NullPointerException("cannot compare null to value"); }
             if (value2 == null) { throw new NullPointerException("cannot compare value to null"); }
-            return value1.stringValue().compareTo(value2.stringValue());
+            // Order blank nodes so that they come after other values.
+            if (value1 instanceof BNode) {
+                if (value2 instanceof BNode) {
+                    if (bnc == null) { bnc = new BNodeComparator(); }
+                    return bnc.compare((BNode)value1, (BNode)value2);
+                } else {
+                    return 1; // blank node value1 comes after value2.
+                }
+            } else {
+                if (value2 instanceof BNode) {
+                    return -1; // value1 comes before blank node value2.
+                } else { // compare non-blank-node values.
+                    // TODO: support natural ordering of non-string literals
+                    return value1.stringValue().compareTo(value2.stringValue());
+                }
+            }
         }
     }
 
@@ -106,17 +219,6 @@ public class SortedTurtleWriter extends RDFWriterBase {
     /** A list of RDF resource values. */
     private class TurtleResourceList extends TreeSet<Resource> {
         public TurtleResourceList() { super(new ResourceComparator()); }
-    }
-
-    /** Comparator for Sesame BNode objects. */
-    // TODO: give this a proper implementation that *does not* use 'stringValue'
-    private class BNodeComparator implements Comparator<BNode> {
-        @Override
-        public int compare(BNode bnode1, BNode bnode2) {
-            if (bnode1 == null) { throw new NullPointerException("cannot compare null to BNode"); }
-            if (bnode2 == null) { throw new NullPointerException("cannot compare BNode to null"); }
-            return bnode1.stringValue().compareTo(bnode2.stringValue());
-        }
     }
 
     /** A list of RDF blank nodes. */
@@ -318,7 +420,7 @@ public class SortedTurtleWriter extends RDFWriterBase {
                 }
             }
 
-            // TODO: deal with blank nodes that are subjects or objects
+            // TODO: deal with blank nodes that are subjects
 
             output.flush();
         } catch (Throwable t) {
@@ -452,7 +554,7 @@ public class SortedTurtleWriter extends RDFWriterBase {
     }
 
     private void writeObject(IndentingWriter out, BNode bnode) throws Exception {
-        out.write("["); // TODO: how are BNodes sorted as objects?  Is it repeatable?
+        out.write("[");
         out.writeEOL();
         out.increaseIndentation();
 
