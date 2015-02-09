@@ -71,4 +71,17 @@ class SortedTurtleWriterSpec extends FlatSpec with Matchers {
     outStream close ()
   }
 
+  it should "be able to produce a sorted Turtle file with blank subject nodes" in {
+    val inputFile = new File("src/test/resources/turtle/raw/turtle-example-17.ttl")
+    val outputFile = new File(outputDir, inputFile getName)
+    val outStream = new FileOutputStream(outputFile)
+    val factory = new SortedTurtleWriterFactory()
+    val turtleWriter = factory getWriter (outStream)
+
+    val inputModel = Rio parse (new FileReader(inputFile), "", RDFFormat.TURTLE)
+    Rio write (inputModel, turtleWriter)
+    outStream flush ()
+    outStream close ()
+  }
+
 }

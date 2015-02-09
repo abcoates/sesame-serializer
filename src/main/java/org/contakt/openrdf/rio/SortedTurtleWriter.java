@@ -96,9 +96,21 @@ public class SortedTurtleWriter extends RDFWriterBase {
 
         @Override
         public int compare(TurtlePredicateObjectMap map1, TurtlePredicateObjectMap map2) {
-            Iterator<URI> iter1 = map1.keySet().iterator();
-            Iterator<URI> iter2 = map2.keySet().iterator();
-            return compare(map1, iter1, map2, iter2);
+            if (map1 == null) {
+                if (map2 == null) {
+                    return 0; // two null maps are equal
+                } else {
+                    return -1; // null map comes before non-null map
+                }
+            } else {
+                if (map2 == null) {
+                    return 1; // non-null map comes before null map
+                } else {
+                    Iterator<URI> iter1 = map1.keySet().iterator();
+                    Iterator<URI> iter2 = map2.keySet().iterator();
+                    return compare(map1, iter1, map2, iter2);
+                }
+            }
         }
 
         private int compare(TurtlePredicateObjectMap map1, Iterator<URI> iter1, TurtlePredicateObjectMap map2, Iterator<URI> iter2) {
@@ -236,10 +248,7 @@ public class SortedTurtleWriter extends RDFWriterBase {
     private TurtleResourceList ontologies = null;
 
     /** List of blank nodes which are objects of statements. */
-    private TurtleBNodeList objectBlankNodes = null;
-
-    /** List of blank nodes which not the object of another statement. */
-    private TurtleBNodeList globalBlankNodes = null;
+    private ArrayList<BNode> objectBlankNodes = null;
 
     /** Hash map containing triple data. */
     private TurtleSubjectPredicateObjectMap tripleMap = null;
@@ -338,8 +347,7 @@ public class SortedTurtleWriter extends RDFWriterBase {
         output.setIndentationLevel(0);
         namespaceTable = new TreeMap<String, String>();
         ontologies = new TurtleResourceList();
-        objectBlankNodes = new TurtleBNodeList();
-        globalBlankNodes = new TurtleBNodeList();
+        objectBlankNodes = new ArrayList<BNode>();
         tripleMap = new TurtleSubjectPredicateObjectMap();
     }
 
@@ -403,24 +411,25 @@ public class SortedTurtleWriter extends RDFWriterBase {
             }
 
             // Write out subjects which are ontologies.
-            // TODO: fix the following to handle blank nodes as well.
             for (Resource subject : ontologies) {
-                if (!(subject instanceof BNode)) { // TODO: remove this suppression of blank nodes
+                if (!(subject instanceof BNode)) {
                     writeSubjectTriples(output, subject);
                 }
             }
 
-            // Write out all other subjects (not ontologies).
-            // TODO: fix the following to handle blank nodes as well.
+            // Write out all other subjects (not ontologies; also not blank nodes).
             for (Resource subject : tripleMap.keySet()) {
-                if (!ontologies.contains(subject)) {
-                    if (!(subject instanceof BNode)) { // TODO: remove this suppression of blank nodes
-                        writeSubjectTriples(output, subject);
-                    }
+                if (!ontologies.contains(subject) && !(subject instanceof BNode)) {
+                    writeSubjectTriples(output, subject);
                 }
             }
 
-            // TODO: deal with blank nodes that are subjects
+            // Write out blank nodes that are subjects but not objects.
+            for (Resource subject : tripleMap.keySet()) {
+                if ((subject instanceof BNode) && !objectBlankNodes.contains((BNode)subject)) {
+                    writeSubjectTriples(output, subject);
+                }
+            }
 
             output.flush();
         } catch (Throwable t) {
@@ -447,6 +456,8 @@ public class SortedTurtleWriter extends RDFWriterBase {
         }
         if (qname != null) {
             writeQName(out, qname);
+        } else if (subject instanceof BNode) {
+            out.write("[]");
         } else {
             out.write("<" + subject.stringValue() + ">");
         }
