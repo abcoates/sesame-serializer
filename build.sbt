@@ -13,3 +13,6 @@ libraryDependencies += "org.openrdf.sesame" % "sesame-runtime" % "2.7.14"
 libraryDependencies += "org.slf4j" % "slf4j-api" % "1.7.10"
 
 libraryDependencies += "org.slf4j" % "slf4j-log4j12" % "1.7.10"
+
+libraryDependencies += "commons-cli" % "commons-cli" % "1.2"
+

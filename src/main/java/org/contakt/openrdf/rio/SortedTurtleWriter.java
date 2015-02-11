@@ -53,6 +53,9 @@ public class SortedTurtleWriter extends RDFWriterBase {
     /** owl:sameAs URL */
     private static final URI owlSameAs = new URIImpl(OWL_NS_URI + "sameAs");
 
+    /** xs:string URL */
+    private static final URI xsString = new URIImpl(XML_SCHEMA_NS_URI + "string");
+
     /** Comparator for TurtleObjectList objects. */
     private class TurtleObjectListComparator implements Comparator<TurtleObjectList> {
         private ValueComparator valc = null;
@@ -496,9 +499,12 @@ public class SortedTurtleWriter extends RDFWriterBase {
         } else if (values.size() > 1) {
             out.writeEOL();
             out.increaseIndentation();
+            int numValues = values.size();
+            int valueIndex = 0;
             for (Value value : values) {
+                valueIndex += 1;
                 writeObject(out, value);
-                out.write(",");
+                if (valueIndex < numValues) { out.write(","); }
                 out.writeEOL();
             }
             out.write(";");
@@ -517,11 +523,15 @@ public class SortedTurtleWriter extends RDFWriterBase {
      * @return The equivalent QName for the URI, or null if no equivalent.
      */
     private QName convertUriToQName(URI uri) {
-        // TODO: check that the local part (tail) of the QName only contains valid QName characters.
         String uriString = uri.stringValue();
         for (String uriStem : reverseNamespaceTable.keySet()) {
             if ((uriString.length() > uriStem.length()) && uriString.startsWith(uriStem)) {
-                return new QName(uriStem, uriString.substring(uriStem.length()), reverseNamespaceTable.get(uriStem));
+                String localPart = uriString.substring(uriStem.length());
+                if (isPrefixedNameLocalPart(localPart)) { // to be a value QName, the 'local part' has to be valid
+                    return new QName(uriStem, localPart, reverseNamespaceTable.get(uriStem));
+                } else {
+                    return null;
+                }
             }
         }
         // Failed to find a match, return null.
@@ -551,7 +561,6 @@ public class SortedTurtleWriter extends RDFWriterBase {
     }
 
     private void writeObject(IndentingWriter out, Value value) throws Exception {
-        // TODO: add other object types, handle quotes in strings, etc.
         if (value instanceof BNode) {
             writeObject(out, (BNode) value);
         } else if (value instanceof URI) {
@@ -599,12 +608,69 @@ public class SortedTurtleWriter extends RDFWriterBase {
         if (literal == null) {
             out.write("null<Literal> ");
         } else if (literal.getLanguage() != null) {
-            out.write("\"" + literal.stringValue() + "\"@" + literal.getLanguage() + " "); // TODO: handle character that need escaping
-        } else if (literal.getDatatype() != null) {
-            out.write("\"" + literal.stringValue() + "\"^^"); // TODO: handle character that need escaping
+            writeString(out, literal.stringValue());
+            out.write("@" + literal.getLanguage() + " ");
+        } else if ((literal.getDatatype() != null) && !xsString.equals(literal.getDatatype())) { // RDF 1.1 assumes 'xs:string' by default as the datatype for strings
+            writeString(out, literal.stringValue());
+            out.write("^^");
             writeUri(out, literal.getDatatype());
         } else {
-            out.write("\"" + literal.stringValue() + "\""); // TODO: handle character that need escaping
+            writeString(out, literal.stringValue());
+        }
+    }
+
+    private String escapeString(String str) {
+        if (str == null) { return null; }
+        return str.replaceAll("\\\\", "\\\\\\\\");
+    }
+
+    private boolean isMultilineString(String str) {
+        if (str == null) { return false; }
+        for (int idx = 0; idx < str.length(); idx++) {
+            switch (str.charAt(idx)) {
+                case 0xA: return true;
+                case 0xB: return true;
+                case 0xC: return true;
+                case 0xD: return true;
+            }
+        }
+        return false;
+    }
+
+    private void writeString(IndentingWriter out, String str) throws Exception {
+        if (str == null) { return; }
+        if (isMultilineString(str)) { // multi-line string
+            if (str.contains("\"")) { // string contains double quote chars
+                if (str.contains("'")) { // string contains both single and double quote chars
+                    out.write("\"\"\"");
+                    out.write(escapeString(str).replaceAll("\"", "\\\\\""));
+                    out.write("\"\"\"");
+                } else { // string contains double quote chars but no single quote chars
+                    out.write("'''");
+                    out.write(escapeString(str));
+                    out.write("'''");
+                }
+            } else { // string has no double quote chars
+                out.write("\"\"\"");
+                out.write(escapeString(str));
+                out.write("\"\"\"");
+            }
+        } else { // single-line string
+            if (str.contains("\"")) { // string contains double quote chars
+                if (str.contains("'")) { // string contains both single and double quote chars
+                    out.write("\"");
+                    out.write(escapeString(str).replaceAll("\"", "\\\\\""));
+                    out.write("\"");
+                } else { // string contains double quote chars but no single quote chars
+                    out.write("'");
+                    out.write(escapeString(str));
+                    out.write("'");
+                }
+            } else { // string has no double quote chars
+                out.write("\"");
+                out.write(escapeString(str));
+                out.write("\"");
+            }
         }
     }
 
@@ -656,4 +722,46 @@ public class SortedTurtleWriter extends RDFWriterBase {
     public void handleComment(String comment) throws RDFHandlerException {
         // NOTE: comments are suppressed, as it isn't clear how to sort them sensibly with triples.
     }
+
+    /** Whether the character is a "name character", as defined in the XML namespaces spec.  Characters above Unicode FFFF are included. */
+    public boolean isNameChar(char ch) {
+        if ('-' == ch) return true;
+        if ('.' == ch) return true;
+        if ('_' == ch) return true;
+        if ('\\' == ch) return true;
+        if (':' == ch) return true;
+        if (('0' <= ch) && (ch <= '9')) return true;
+        if (('A' <= ch) && (ch <= 'Z')) return true;
+        if (('a' <= ch) && (ch <= 'z')) return true;
+        if (('\u00C0' <= ch) && (ch <= '\u00D6')) return true;
+        if (('\u00D8' <= ch) && (ch <= '\u00F6')) return true;
+        if (('\u00F8' <= ch) && (ch <= '\u02FF')) return true;
+        if (('\u0370' <= ch) && (ch <= '\u037D')) return true;
+        if (('\u037F' <= ch) && (ch <= '\u1FFF')) return true;
+        if (('\u200C' <= ch) && (ch <= '\u200D')) return true;
+        if (('\u2070' <= ch) && (ch <= '\u218F')) return true;
+        if (('\u2C00' <= ch) && (ch <= '\u2FEF')) return true;
+        if (('\u3001' <= ch) && (ch <= '\uD7FF')) return true;
+        if (('\uF900' <= ch) && (ch <= '\uFDCF')) return true;
+        if (('\uFDF0' <= ch) && (ch <= '\uFFFD')) return true;
+        if ('\u00B7' == ch) return true;
+        if (('\u0300' <= ch) && (ch <= '\u036F')) return true;
+        if (('\u203F' <= ch) && (ch <= '\u2040')) return true;
+        return false;
+    }
+
+    /**
+     * Whether the string is valid as the local part of a prefixed name, as defined in the RDF 1.1 Turtle spec.
+     * Doesn't check that backslash escape sequences in the name are correctly formed.
+     */
+    public boolean isPrefixedNameLocalPart(String str) {
+        if (str == null) return false;
+        if (str.length() < 1) return false;
+        if ((':' != str.charAt(0)) && !isNameChar(str.charAt(0))) return false; // cannot start with a colon
+        for (int idx = 2; idx < str.length(); idx++) {
+            if (!isNameChar(str.charAt(idx))) return false;
+        }
+        return true;
+    }
+
 }
