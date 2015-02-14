@@ -1,5 +1,7 @@
 package org.contakt.openrdf.rio
 
+import org.openrdf.rio.turtle.{TurtleWriterFactory, TurtleWriter}
+
 import scala.io.BufferedSource
 import scala.language.postfixOps
 
@@ -26,7 +28,8 @@ class SortedTurtleWriterSpec extends FlatSpec with Matchers {
     newDir mkdirs ()
     newDir
   }
-  val outputDir = mkCleanDir(s"target//temp//${this.getClass.getName}")
+  val outputDir0 = mkCleanDir(s"target//temp//${classOf[TurtleWriter].getName}")
+  val outputDir1 = mkCleanDir(s"target//temp//${this.getClass.getName}")
   val outputDir2 = mkCleanDir(s"target//temp//${this.getClass.getName}_2")
 
   /** Sets the extension part of a filename path, e.g. "ttl". */
@@ -57,15 +60,35 @@ class SortedTurtleWriterSpec extends FlatSpec with Matchers {
     val writer4 = new SortedTurtleWriter(outWriter, new URIImpl("http://example.com#"), "\t\t")
     assert(writer4 != null, "failed to create default SortedTurtleWriter from Writer")
   }
+
+  "A TurtleWriter" should "be able to read various RDF documents and write them in sorted Turtle format" in {
+    val rawTurtleDirectory = new File("src/test/resources/turtle/raw")
+    assert(rawTurtleDirectory isDirectory, "raw turtle directory is not a directory")
+    assert(rawTurtleDirectory exists, "raw turtle directory does not exist")
+
+    var fileCount = 0
+    for (sourceFile <- rawTurtleDirectory.listFiles()) {
+      System.err.println("read/write: " + sourceFile.getName); // TODO: remove debugging
+      fileCount += 1
+      val targetFile = new File(outputDir0, setFilePathExtension(sourceFile getName, "ttl"))
+      val outStream = new FileOutputStream(targetFile)
+      val factory = new TurtleWriterFactory()
+      val turtleWriter = factory getWriter (outStream)
+      val rdfFormat = Rio getParserFormatForFileName(sourceFile getName, RDFFormat.TURTLE)
+      val inputModel = Rio parse (new FileReader(sourceFile), "", rdfFormat)
+      Rio write (inputModel, turtleWriter)
+      outStream flush ()
+      outStream close ()
+    }
+  }
   
   "A SortedTurtleWriter" should "be able to produce a sorted Turtle file" in {
     val inputFile = new File("src/test/resources/turtle/raw/topbraid-countries-ontology.ttl")
     val baseUri = new URIImpl("http://topbraid.org/countries")
-    val outputFile = new File(outputDir, setFilePathExtension(inputFile getName, "ttl"))
+    val outputFile = new File(outputDir1, setFilePathExtension(inputFile getName, "ttl"))
     val outStream = new FileOutputStream(outputFile)
     val factory = new SortedTurtleWriterFactory()
     val turtleWriter = factory getWriter (outStream, baseUri, null)
-
     val inputModel = Rio parse (new FileReader(inputFile), baseUri stringValue, RDFFormat.TURTLE)
     Rio write (inputModel, turtleWriter)
     outStream flush ()
@@ -74,7 +97,7 @@ class SortedTurtleWriterSpec extends FlatSpec with Matchers {
 
   it should "be able to produce a sorted Turtle file with blank object nodes" in {
     val inputFile = new File("src/test/resources/turtle/raw/topquadrant-extended-turtle-example.ttl")
-    val outputFile = new File(outputDir, setFilePathExtension(inputFile getName, "ttl"))
+    val outputFile = new File(outputDir1, setFilePathExtension(inputFile getName, "ttl"))
     val outStream = new FileOutputStream(outputFile)
     val factory = new SortedTurtleWriterFactory()
     val turtleWriter = factory getWriter (outStream)
@@ -87,7 +110,7 @@ class SortedTurtleWriterSpec extends FlatSpec with Matchers {
 
   it should "be able to produce a sorted Turtle file with blank subject nodes" in {
     val inputFile = new File("src/test/resources/turtle/raw/turtle-example-17.ttl")
-    val outputFile = new File(outputDir, setFilePathExtension(inputFile getName, "ttl"))
+    val outputFile = new File(outputDir1, setFilePathExtension(inputFile getName, "ttl"))
     val outStream = new FileOutputStream(outputFile)
     val factory = new SortedTurtleWriterFactory()
     val turtleWriter = factory getWriter (outStream)
@@ -105,8 +128,9 @@ class SortedTurtleWriterSpec extends FlatSpec with Matchers {
 
     var fileCount = 0
     for (sourceFile <- rawTurtleDirectory.listFiles()) {
+      System.err.println("read/write #0: " + sourceFile.getName); // TODO: remove debugging
       fileCount += 1
-      val targetFile = new File(outputDir, setFilePathExtension(sourceFile getName, "ttl"))
+      val targetFile = new File(outputDir1, setFilePathExtension(sourceFile getName, "ttl"))
       RDFFormatter run Array[String](
         "-s", sourceFile getAbsolutePath,
         "-t", targetFile getAbsolutePath
@@ -122,8 +146,9 @@ class SortedTurtleWriterSpec extends FlatSpec with Matchers {
     // Serialise sample files as sorted Turtle.
     var fileCount = 0
     for (sourceFile <- rawTurtleDirectory.listFiles()) {
+      System.err.println("read/write #1: " + sourceFile.getName); // TODO: remove debugging
       fileCount += 1
-      val targetFile = new File(outputDir, setFilePathExtension(sourceFile getName, "ttl"))
+      val targetFile = new File(outputDir1, setFilePathExtension(sourceFile getName, "ttl"))
       RDFFormatter run Array[String](
         "-s", sourceFile getAbsolutePath,
         "-t", targetFile getAbsolutePath
@@ -132,7 +157,8 @@ class SortedTurtleWriterSpec extends FlatSpec with Matchers {
 
     // Re-serialise the sorted files, again as sorted Turtle.
     fileCount = 0
-    for (sourceFile <- outputDir.listFiles()) {
+    for (sourceFile <- outputDir1.listFiles()) {
+      System.err.println("read/write #2: " + sourceFile.getName); // TODO: remove debugging
       fileCount += 1
       val targetFile = new File(outputDir2, setFilePathExtension(sourceFile getName, "ttl"))
       RDFFormatter run Array[String](
@@ -144,8 +170,9 @@ class SortedTurtleWriterSpec extends FlatSpec with Matchers {
     // Check that re-serialising the Turtle files has changed nothing.
     fileCount = 0
     for (file2 <- outputDir2.listFiles()) {
+      System.err.println("read/write #3: " + file2.getName); // TODO: remove debugging
       fileCount += 1
-      val file = new File(outputDir, file2 getName)
+      val file = new File(outputDir1, file2 getName)
       val contents1 = getFileContents(file)
       val contents2 = getFileContents(file2)
       assert(contents1 === contents2, s"match failed for file: ${file getAbsolutePath}")

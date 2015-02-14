@@ -50,6 +50,9 @@ public class SortedTurtleWriter extends RDFWriterBase {
     /** owl:Ontology URL */
     private static final URI owlOntology = new URIImpl(OWL_NS_URI + "Ontology");
 
+    /** owl:imports URL */
+    private static final URI owlImports = new URIImpl(OWL_NS_URI + "imports");
+
     /** owl:sameAs URL */
     private static final URI owlSameAs = new URIImpl(OWL_NS_URI + "sameAs");
 
@@ -57,34 +60,56 @@ public class SortedTurtleWriter extends RDFWriterBase {
     private static final URI xsString = new URIImpl(XML_SCHEMA_NS_URI + "string");
 
     /** Comparator for TurtleObjectList objects. */
-    private class TurtleObjectListComparator implements Comparator<TurtleObjectList> {
+    private class TurtleObjectListComparator implements Comparator<SortedTurtleObjectList> {
         private ValueComparator valc = null;
 
         @Override
-        public int compare(TurtleObjectList list1, TurtleObjectList list2) {
-            Iterator<Value> iter1 = list1.iterator();
-            Iterator<Value> iter2 = list2.iterator();
-            return compare(list1, iter1, list2, iter2);
+        public int compare(SortedTurtleObjectList list1, SortedTurtleObjectList list2) {
+            return compare(list1, list2, new ArrayList<Object>());
         }
 
-        private int compare(TurtleObjectList list1, Iterator<Value> iter1, TurtleObjectList list2, Iterator<Value> iter2) {
+        public int compare(SortedTurtleObjectList list1, SortedTurtleObjectList list2, ArrayList<Object> excludedList) {
+            if ((list1 == null) || excludedList.contains(list1)) {
+                if ((list2 == null) || excludedList.contains(list2)) {
+                    return 0; // two null/excluded lists are equal
+                } else {
+                    return -1; // null/excluded list comes before non-null/excluded list
+                }
+            } else {
+                if ((list2 == null) || excludedList.contains(list2)) {
+                    return 1; // non-null/excluded list comes before null/excluded list
+                } else {
+                    if (list1 == list2) {
+                        return 0;
+                    } else {
+                        Iterator<Value> iter1 = list1.iterator();
+                        Iterator<Value> iter2 = list2.iterator();
+                        return compare(list1, iter1, list2, iter2, excludedList);
+                    }
+                }
+            }
+        }
+
+        private int compare(SortedTurtleObjectList list1, Iterator<Value> iter1, SortedTurtleObjectList list2, Iterator<Value> iter2, ArrayList<Object> excludedList) {
             if (iter1.hasNext()) {
                 if (iter2.hasNext()) {
                     Value value1 = iter1.next();
                     Value value2 = iter2.next();
                     if (valc == null) { valc = new ValueComparator(); }
-                    int cmp = valc.compare(value1, value2);
+                    excludedList.add(list1);
+                    excludedList.add(list2);
+                    int cmp = valc.compare(value1, value2, excludedList);
                     if (cmp != 0) {
                         return cmp;
                     } else { // values are the same, try the next values in the lists
-                        return compare(list1, iter1, list2, iter2);
+                        return compare(list1, iter1, list2, iter2, excludedList);
                     }
                 } else { // only iter1 has a next value
-                    return 1; // map1 comes after map2
+                    return 1; // list1 comes after list2
                 }
             } else {
                 if (iter2.hasNext()) { // only iter2 has a next value
-                    return -1; // map1 comes before map2
+                    return -1; // list1 comes before list2
                 } else { // both iterators have no next value
                     return 0;
                 }
@@ -93,47 +118,57 @@ public class SortedTurtleWriter extends RDFWriterBase {
     }
 
     /** Comparator for TurtlePredicateObjectMap objects. */
-    private class TurtlePredicateObjectMapComparator implements Comparator<TurtlePredicateObjectMap> {
+    private class TurtlePredicateObjectMapComparator implements Comparator<SortedTurtlePredicateObjectMap> {
         private URIComparator uric = null;
         private TurtleObjectListComparator tolc = null;
 
         @Override
-        public int compare(TurtlePredicateObjectMap map1, TurtlePredicateObjectMap map2) {
-            if (map1 == null) {
-                if (map2 == null) {
-                    return 0; // two null maps are equal
+        public int compare(SortedTurtlePredicateObjectMap map1, SortedTurtlePredicateObjectMap map2) {
+            return compare(map1, map2, new ArrayList<Object>());
+        }
+
+        public int compare(SortedTurtlePredicateObjectMap map1, SortedTurtlePredicateObjectMap map2, ArrayList<Object> excludedList) {
+            if ((map1 == null) || excludedList.contains(map1)) {
+                if ((map2 == null) || excludedList.contains(map2)) {
+                    return 0; // two null/excluded maps are equal
                 } else {
-                    return -1; // null map comes before non-null map
+                    return -1; // null/excluded map comes before non-null/excluded map
                 }
             } else {
-                if (map2 == null) {
-                    return 1; // non-null map comes before null map
+                if ((map2 == null) || excludedList.contains(map2)) {
+                    return 1; // non-null/excluded map comes before null/excluded map
                 } else {
-                    Iterator<URI> iter1 = map1.keySet().iterator();
-                    Iterator<URI> iter2 = map2.keySet().iterator();
-                    return compare(map1, iter1, map2, iter2);
+                    if (map1 == map2) {
+                        return 0;
+                    } else {
+                        Iterator<URI> iter1 = map1.keySet().iterator();
+                        Iterator<URI> iter2 = map2.keySet().iterator();
+                        return compare(map1, iter1, map2, iter2, excludedList);
+                    }
                 }
             }
         }
 
-        private int compare(TurtlePredicateObjectMap map1, Iterator<URI> iter1, TurtlePredicateObjectMap map2, Iterator<URI> iter2) {
+        private int compare(SortedTurtlePredicateObjectMap map1, Iterator<URI> iter1, SortedTurtlePredicateObjectMap map2, Iterator<URI> iter2, ArrayList<Object> excludedList) {
             if (iter1.hasNext()) {
                 if (iter2.hasNext()) {
                     URI key1 = iter1.next();
                     URI key2 = iter2.next();
                     if (uric == null) { uric = new URIComparator(); }
-                    int cmp = uric.compare(key1, key2);
+                    excludedList.add(map1);
+                    excludedList.add(map2);
+                    int cmp = uric.compare(key1, key2, excludedList);
                     if (cmp != 0) {
                         return cmp;
                     } else { // predicate keys are the same, so test object values
-                        TurtleObjectList values1 = map1.get(key1);
-                        TurtleObjectList values2 = map2.get(key2);
+                        SortedTurtleObjectList values1 = map1.get(key1);
+                        SortedTurtleObjectList values2 = map2.get(key2);
                         if (tolc == null) { tolc = new TurtleObjectListComparator(); }
-                        cmp = tolc.compare(values1, values2);
+                        cmp = tolc.compare(values1, values2, excludedList);
                         if (cmp != 0) {
                             return cmp;
                         } else { // values are the same, try the next predicates in the maps
-                            return compare(map1, iter1, map2, iter2);
+                            return compare(map1, iter1, map2, iter2, excludedList);
                         }
                     }
                 } else { // only iter1 has a next value
@@ -155,12 +190,32 @@ public class SortedTurtleWriter extends RDFWriterBase {
 
         @Override
         public int compare(BNode bnode1, BNode bnode2) {
-            if (bnode1 == null) { throw new NullPointerException("cannot compare null to BNode"); }
-            if (bnode2 == null) { throw new NullPointerException("cannot compare BNode to null"); }
-            TurtlePredicateObjectMap map1 = tripleMap.get(bnode1);
-            TurtlePredicateObjectMap map2 = tripleMap.get(bnode2);
-            if (tpomc == null) { tpomc = new TurtlePredicateObjectMapComparator(); }
-            return tpomc.compare(map1, map2);
+            return compare(bnode1, bnode2, new ArrayList<Object>());
+        }
+
+        public int compare(BNode bnode1, BNode bnode2, ArrayList<Object> excludedList) {
+            if ((bnode1 == null) || excludedList.contains(bnode1)) {
+                if ((bnode2 == null) || excludedList.contains(bnode2)) {
+                    return 0; // two null/excluded blank nodes are equal
+                } else {
+                    return -1; // null/excluded blank node comes before non-null/excluded blank node
+                }
+            } else {
+                if ((bnode2 == null) || excludedList.contains(bnode2)) {
+                    return 1; // non-null/excluded blank node comes before null/excluded blank node
+                } else {
+                    if (bnode1 == bnode2) {
+                        return 0;
+                    } else {
+                        SortedTurtlePredicateObjectMap map1 = unsortedTripleMap.getSorted(bnode1);
+                        SortedTurtlePredicateObjectMap map2 = unsortedTripleMap.getSorted(bnode2);
+                        if (tpomc == null) { tpomc = new TurtlePredicateObjectMapComparator(); }
+                        excludedList.add(bnode1);
+                        excludedList.add(bnode2);
+                        return tpomc.compare(map1, map2, excludedList);
+                    }
+                }
+            }
         }
     }
 
@@ -170,75 +225,233 @@ public class SortedTurtleWriter extends RDFWriterBase {
 
         @Override
         public int compare(Value value1, Value value2) {
-            if (value1 == null) { throw new NullPointerException("cannot compare null to value"); }
-            if (value2 == null) { throw new NullPointerException("cannot compare value to null"); }
-            // Order blank nodes so that they come after other values.
-            if (value1 instanceof BNode) {
-                if (value2 instanceof BNode) {
-                    if (bnc == null) { bnc = new BNodeComparator(); }
-                    return bnc.compare((BNode)value1, (BNode)value2);
+            return compare(value1, value2, new ArrayList<Object>());
+        }
+
+        public int compare(Value value1, Value value2, ArrayList<Object> excludedList) {
+            if ((value1 == null) || excludedList.contains(value1)) {
+                if ((value2 == null) || excludedList.contains(value2)) {
+                    return 0; // two null/excluded values are equal
                 } else {
-                    return 1; // blank node value1 comes after value2.
+                    return -1; // null/excluded value comes before non-null/excluded value
                 }
             } else {
-                if (value2 instanceof BNode) {
-                    return -1; // value1 comes before blank node value2.
-                } else { // compare non-blank-node values.
-                    // TODO: support natural ordering of non-string literals
-                    return value1.stringValue().compareTo(value2.stringValue());
+                if ((value2 == null) || excludedList.contains(value2)) {
+                    return 1; // non-null/excluded value comes before null/excluded value
+                } else {
+                    if (value1 == value2) {
+                        return 0;
+                    } else {
+                        // Order blank nodes so that they come after other values.
+                        if (value1 instanceof BNode) {
+                            if (value2 instanceof BNode) {
+                                if (bnc == null) { bnc = new BNodeComparator(); }
+                                return bnc.compare((BNode)value1, (BNode)value2, excludedList);
+                            } else {
+                                return 1; // blank node value1 comes after value2.
+                            }
+                        } else {
+                            if (value2 instanceof BNode) {
+                                return -1; // value1 comes before blank node value2.
+                            } else { // compare non-blank-node values.
+                                // TODO: support natural ordering of non-string literals
+                                return value1.stringValue().compareTo(value2.stringValue());
+                            }
+                        }
+                    }
                 }
             }
         }
     }
 
-    /** A list of RDF object values. */
-    private class TurtleObjectList extends TreeSet<Value> {
-        public TurtleObjectList() { super(new ValueComparator()); }
+    /** An unsorted list of RDF object values. */
+    private class UnsortedTurtleObjectList extends HashSet<Value> {
+        public SortedTurtleObjectList toSorted() {
+            SortedTurtleObjectList sortedOList = new SortedTurtleObjectList();
+            for (Value value : this) {
+                sortedOList.add(value);
+            }
+            return sortedOList;
+        }
+    }
+
+    /** A sorted list of RDF object values. */
+    private class SortedTurtleObjectList extends TreeSet<Value> {
+        public SortedTurtleObjectList() { super(new ValueComparator()); }
     }
 
     /** Comparator for Sesame URI objects. */
     private class URIComparator implements Comparator<URI> {
         @Override
         public int compare(URI uri1, URI uri2) {
-            if (uri1 == null) { throw new NullPointerException("cannot compare null to URI"); }
-            if (uri2 == null) { throw new NullPointerException("cannot compare URI to null"); }
-            return uri1.stringValue().compareTo(uri2.stringValue());
+            return compare(uri1, uri2, new ArrayList<Object>());
+        }
+
+        public int compare(URI uri1, URI uri2, ArrayList<Object> excludedList) {
+            if ((uri1 == null) || excludedList.contains(uri1)) {
+                if ((uri2 == null) || excludedList.contains(uri2)) {
+                    return 0; // two null/excluded URIs are equal
+                } else {
+                    return -1; // null/excluded URI comes before non-null/excluded URI
+                }
+            } else {
+                if ((uri2 == null) || excludedList.contains(uri2)) {
+                    return 1; // non-null/excluded URI comes before null/excluded URI
+                } else {
+                    if (uri1 == uri2) {
+                        return 0;
+                    } else {
+                        return uri1.stringValue().compareTo(uri2.stringValue());
+                    }
+                }
+            }
         }
     }
 
-    /** A map from predicate URIs to lists of object values. */
-    private class TurtlePredicateObjectMap extends TreeMap<URI, TurtleObjectList> {
-        public TurtlePredicateObjectMap() { super(new URIComparator()); }
+    /** An unsorted map from predicate URIs to lists of object values. */
+    private class UnsortedTurtlePredicateObjectMap extends HashMap<URI, UnsortedTurtleObjectList> {
+        public SortedTurtleObjectList getSorted(URI predicate) {
+            if (containsKey(predicate)) {
+                return get(predicate).toSorted();
+            } else {
+                return null;
+            }
+        }
+
+        public SortedTurtlePredicateObjectMap toSorted() {
+            SortedTurtlePredicateObjectMap sortedPOMap = new SortedTurtlePredicateObjectMap();
+            for (URI predicate : keySet()) {
+                sortedPOMap.put(predicate, getSorted(predicate));
+            }
+            return sortedPOMap;
+        }
     }
 
-    /** A list of RDF URI values. */
-    private class TurtlePredicateList extends TreeSet<URI> {
-        public TurtlePredicateList() { super(new URIComparator()); }
+    /** A sorted map from predicate URIs to lists of object values. */
+    private class SortedTurtlePredicateObjectMap extends TreeMap<URI, SortedTurtleObjectList> {
+        public SortedTurtlePredicateObjectMap() { super(new URIComparator()); }
+    }
+
+    /** An unsorted list of RDF URI values. */
+    private class UnsortedTurtlePredicateList extends HashSet<URI> {
+        public SortedTurtlePredicateList toSorted() {
+            SortedTurtlePredicateList sortedPList = new SortedTurtlePredicateList();
+            for (URI predicate : this) {
+                sortedPList.add(predicate);
+            }
+            return sortedPList;
+        }
+    }
+
+    /** A sorted list of RDF URI values. */
+    private class SortedTurtlePredicateList extends TreeSet<URI> {
+        public SortedTurtlePredicateList() { super(new URIComparator()); }
     }
 
     /** Comparator for Sesame Resource objects. */
     private class ResourceComparator implements Comparator<Resource> {
+        private BNodeComparator bnc = null;
+        private URIComparator uric = null;
+
         @Override
         public int compare(Resource resource1, Resource resource2) {
-            if (resource1 == null) { throw new NullPointerException("cannot compare null to resource"); }
-            if (resource2 == null) { throw new NullPointerException("cannot compare resource to null"); }
-            return resource1.stringValue().compareTo(resource2.stringValue());
+            return compare(resource1, resource2, new ArrayList<Object>());
+        }
+
+        private int compare(Resource resource1, Resource resource2, ArrayList<Object> excludedList) {
+            if ((resource1 == null) || excludedList.contains(resource1)) {
+                if ((resource2 == null) || excludedList.contains(resource2)) {
+                    return 0; // two null/excluded resources are equal
+                } else {
+                    return -1; // null/excluded resource comes before non-null/excluded resource
+                }
+            } else {
+                if ((resource2 == null) || excludedList.contains(resource2)) {
+                    return 1; // non-null/excluded resource comes before null/excluded resource
+                } else {
+                    if (resource1 == resource2) {
+                        return 0;
+                    } else {
+                        // Order blank nodes so that they come after other values.
+                        if (resource1 instanceof BNode) {
+                            if (resource2 instanceof BNode) {
+                                if (bnc == null) { bnc = new BNodeComparator(); }
+                                return bnc.compare((BNode)resource1, (BNode)resource2, excludedList);
+                            } else {
+                                return 1; // blank node resource1 comes after resource2.
+                            }
+                        } else {
+                            if (resource2 instanceof BNode) {
+                                return -1; // resource1 comes before blank node resource2.
+                            } else { // compare non-blank-node resources.
+                                if ((resource1 instanceof URI) && (resource2 instanceof URI)) { // compare URIs
+                                    if (uric == null) { uric = new URIComparator(); }
+                                    return uric.compare((URI)resource1, (URI)resource2, excludedList);
+                                } else {
+                                    return resource1.stringValue().compareTo(resource2.stringValue());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
-    /** A map from subject resources to predicate/object pairs. */
-    private class TurtleSubjectPredicateObjectMap extends TreeMap<Resource, TurtlePredicateObjectMap> {
-        public TurtleSubjectPredicateObjectMap() { super(new ResourceComparator()); }
+    /** An unsorted map from subject resources to predicate/object pairs. */
+    private class UnsortedTurtleSubjectPredicateObjectMap extends HashMap<Resource, UnsortedTurtlePredicateObjectMap> {
+        public SortedTurtlePredicateObjectMap getSorted(Resource subject) {
+            if (containsKey(subject)) {
+                return get(subject).toSorted();
+            } else {
+                return null;
+            }
+        }
+
+        public SortedTurtleSubjectPredicateObjectMap toSorted() {
+            SortedTurtleSubjectPredicateObjectMap sortedSPOMap = new SortedTurtleSubjectPredicateObjectMap();
+            for (Resource subject : keySet()) {
+                sortedSPOMap.put(subject, getSorted(subject));
+            }
+            return sortedSPOMap;
+        }
     }
 
-    /** A list of RDF resource values. */
-    private class TurtleResourceList extends TreeSet<Resource> {
-        public TurtleResourceList() { super(new ResourceComparator()); }
+    /** A sorted map from subject resources to predicate/object pairs. */
+    private class SortedTurtleSubjectPredicateObjectMap extends TreeMap<Resource, SortedTurtlePredicateObjectMap> {
+        public SortedTurtleSubjectPredicateObjectMap() { super(new ResourceComparator()); }
     }
 
-    /** A list of RDF blank nodes. */
-    private class TurtleBNodeList extends TreeSet<BNode> {
-        public TurtleBNodeList() { super(new BNodeComparator()); }
+    /** An unsorted list of RDF resource values. */
+    private class UnsortedTurtleResourceList extends HashSet<Resource> {
+        public SortedTurtleResourceList toSorted() {
+            SortedTurtleResourceList sortedRList = new SortedTurtleResourceList();
+            for (Resource resource : this) {
+                sortedRList.add(resource);
+            }
+            return sortedRList;
+        }
+    }
+
+    /** A sorted list of RDF resource values. */
+    private class SortedTurtleResourceList extends TreeSet<Resource> {
+        public SortedTurtleResourceList() { super(new ResourceComparator()); }
+    }
+
+    /** An unsorted list of RDF blank nodes. */
+    private class UnsortedTurtleBNodeList extends HashSet<BNode> {
+        public SortedTurtleBNodeList toSorted() {
+            SortedTurtleBNodeList sortedBNList = new SortedTurtleBNodeList();
+            for (BNode bnode : this) {
+                sortedBNList.add(bnode);
+            }
+            return sortedBNList;
+        }
+    }
+
+    /** A sorted list of RDF blank nodes. */
+    private class SortedTurtleBNodeList extends TreeSet<BNode> {
+        public SortedTurtleBNodeList() { super(new BNodeComparator()); }
     }
 
     /** Output stream for this Turtle writer. */
@@ -247,14 +460,20 @@ public class SortedTurtleWriter extends RDFWriterBase {
     /** Base URI for the Turtle output document. */
     private URI baseUri = null;
 
-    /** List of subjects which are OWL ontologies, as they are rendered before other subjects. */
-    private TurtleResourceList ontologies = null;
+    /** Unsorted list of subjects which are OWL ontologies, as they are rendered before other subjects. */
+    private UnsortedTurtleResourceList unsortedOntologies = null;
+
+    /** Sorted list of subjects which are OWL ontologies, as they are rendered before other subjects. */
+    private SortedTurtleResourceList sortedOntologies = null;
 
     /** List of blank nodes which are objects of statements. */
     private ArrayList<BNode> objectBlankNodes = null;
 
-    /** Hash map containing triple data. */
-    private TurtleSubjectPredicateObjectMap tripleMap = null;
+    /** Unsorted hash map containing triple data. */
+    private UnsortedTurtleSubjectPredicateObjectMap unsortedTripleMap = null;
+
+    /** Sorted hash map containing triple data. */
+    private SortedTurtleSubjectPredicateObjectMap sortedTripleMap = null;
 
     /** Predicates that are specially rendered before all others. */
     private ArrayList<URI> firstPredicates = null;
@@ -349,9 +568,9 @@ public class SortedTurtleWriter extends RDFWriterBase {
     public void startRDF() throws RDFHandlerException {
         output.setIndentationLevel(0);
         namespaceTable = new TreeMap<String, String>();
-        ontologies = new TurtleResourceList();
+        unsortedOntologies = new UnsortedTurtleResourceList();
         objectBlankNodes = new ArrayList<BNode>();
-        tripleMap = new TurtleSubjectPredicateObjectMap();
+        unsortedTripleMap = new UnsortedTurtleSubjectPredicateObjectMap();
     }
 
     /**
@@ -376,6 +595,11 @@ public class SortedTurtleWriter extends RDFWriterBase {
     @Override
     public void endRDF() throws RDFHandlerException {
         try {
+            // Sort triples, etc.
+            sortedOntologies = unsortedOntologies.toSorted();
+            sortedTripleMap = unsortedTripleMap.toSorted();
+
+            // Set up list of predicates that appear first under their subjects.
             firstPredicates = new ArrayList<URI>(); // predicates that are specially rendered first
             firstPredicates.add(rdfType);
             firstPredicates.add(rdfsSubClassOf);
@@ -397,11 +621,36 @@ public class SortedTurtleWriter extends RDFWriterBase {
                 reverseNamespaceTable.put(uri, prefix);
             }
 
-            // Write the baseURI, if any.  Add comment version to support TopBraid Composer.
-            if (baseUri != null) {
-                output.write("# baseURI: " + baseUri); output.writeEOL();
-                output.write("@base <" + baseUri + "> ."); output.writeEOL();
+            // Create list of imports
+            SortedTurtleObjectList importList = new SortedTurtleObjectList();
+            for (Resource subject : sortedOntologies) {
+                if (sortedTripleMap.containsKey(subject)) {
+                    SortedTurtlePredicateObjectMap poMap = sortedTripleMap.get(subject);
+                    if (poMap.containsKey(owlImports)) {
+                        SortedTurtleObjectList importsOList = poMap.get(owlImports);
+                        for (Value value : importsOList) {
+                            importList.add(value);
+                        }
+                    }
+                }
+            }
+
+            // Write TopBraid-specific special comments, if any.
+            if ((baseUri != null) || (importList.size() >= 1)) {
+                // Write the baseURI, if any.
+                if (baseUri != null) {
+                    output.write("# baseURI: " + baseUri); output.writeEOL();
+                }
+                // Write ontology imports, if any.
+                for (Value anImport : importList) {
+                    output.write("# imports: " + anImport.stringValue()); output.writeEOL();
+                }
                 output.writeEOL();
+            }
+
+            // Write the baseURI, if any.
+            if (baseUri != null) {
+                output.write("@base <" + baseUri + "> ."); output.writeEOL();
             }
 
             // Write out prefixes and namespaces URIs.
@@ -413,22 +662,22 @@ public class SortedTurtleWriter extends RDFWriterBase {
                 output.writeEOL();
             }
 
-            // Write out subjects which are ontologies.
-            for (Resource subject : ontologies) {
+            // Write out subjects which are unsortedOntologies.
+            for (Resource subject : sortedOntologies) {
                 if (!(subject instanceof BNode)) {
                     writeSubjectTriples(output, subject);
                 }
             }
 
-            // Write out all other subjects (not ontologies; also not blank nodes).
-            for (Resource subject : tripleMap.keySet()) {
-                if (!ontologies.contains(subject) && !(subject instanceof BNode)) {
+            // Write out all other subjects (not unsortedOntologies; also not blank nodes).
+            for (Resource subject : sortedTripleMap.keySet()) {
+                if (!sortedOntologies.contains(subject) && !(subject instanceof BNode)) {
                     writeSubjectTriples(output, subject);
                 }
             }
 
             // Write out blank nodes that are subjects but not objects.
-            for (Resource subject : tripleMap.keySet()) {
+            for (Resource subject : sortedTripleMap.keySet()) {
                 if ((subject instanceof BNode) && !objectBlankNodes.contains((BNode)subject)) {
                     writeSubjectTriples(output, subject);
                 }
@@ -452,7 +701,7 @@ public class SortedTurtleWriter extends RDFWriterBase {
     }
 
     private void writeSubjectTriples(IndentingWriter out, Resource subject) throws Exception {
-        TurtlePredicateObjectMap poMap = tripleMap.get(subject);
+        SortedTurtlePredicateObjectMap poMap = sortedTripleMap.get(subject);
         QName qname = null; // try to write the subject out as a QName if possible.
         if (subject instanceof URI) {
             qname = convertUriToQName((URI)subject);
@@ -470,7 +719,7 @@ public class SortedTurtleWriter extends RDFWriterBase {
         // Write predicate/object pairs rendered first.
         for (URI predicate : firstPredicates) {
             if (poMap.containsKey(predicate)) {
-                TurtleObjectList values = poMap.get(predicate);
+                SortedTurtleObjectList values = poMap.get(predicate);
                 writePredicateAndObjectValues(out, predicate, values);
             }
         }
@@ -478,7 +727,7 @@ public class SortedTurtleWriter extends RDFWriterBase {
         // Write other predicate/object pairs.
         for (URI predicate : poMap.keySet()) {
             if (!firstPredicates.contains(predicate)) {
-                TurtleObjectList values = poMap.get(predicate);
+                SortedTurtleObjectList values = poMap.get(predicate);
                 writePredicateAndObjectValues(out, predicate, values);
             }
         }
@@ -490,7 +739,7 @@ public class SortedTurtleWriter extends RDFWriterBase {
         out.writeEOL(); // blank line
     }
 
-    private void writePredicateAndObjectValues(IndentingWriter out, URI predicate, TurtleObjectList values) throws Exception {
+    private void writePredicateAndObjectValues(IndentingWriter out, URI predicate, SortedTurtleObjectList values) throws Exception {
         writePredicate(out, predicate);
         if (values.size() == 1) {
             writeObject(out, values.first());
@@ -578,12 +827,12 @@ public class SortedTurtleWriter extends RDFWriterBase {
         out.writeEOL();
         out.increaseIndentation();
 
-        TurtlePredicateObjectMap poMap = tripleMap.get(bnode);
+        SortedTurtlePredicateObjectMap poMap = sortedTripleMap.get(bnode);
 
         // Write predicate/object pairs rendered first.
         for (URI predicate : firstPredicates) {
             if (poMap.containsKey(predicate)) {
-                TurtleObjectList values = poMap.get(predicate);
+                SortedTurtleObjectList values = poMap.get(predicate);
                 writePredicateAndObjectValues(out, predicate, values);
             }
         }
@@ -591,7 +840,7 @@ public class SortedTurtleWriter extends RDFWriterBase {
         // Write other predicate/object pairs.
         for (URI predicate : poMap.keySet()) {
             if (!firstPredicates.contains(predicate)) {
-                TurtleObjectList values = poMap.get(predicate);
+                SortedTurtleObjectList values = poMap.get(predicate);
                 writePredicateAndObjectValues(out, predicate, values);
             }
         }
@@ -683,19 +932,19 @@ public class SortedTurtleWriter extends RDFWriterBase {
     @Override
     public void handleStatement(Statement st) throws RDFHandlerException {
         // Store the statement in the main 'triple map'.
-        TurtlePredicateObjectMap poMap = null;
-        if (tripleMap.containsKey(st.getSubject())) {
-            poMap = tripleMap.get(st.getSubject());
+        UnsortedTurtlePredicateObjectMap poMap = null;
+        if (unsortedTripleMap.containsKey(st.getSubject())) {
+            poMap = unsortedTripleMap.get(st.getSubject());
         } else {
-            poMap = new TurtlePredicateObjectMap();
-            tripleMap.put(st.getSubject(), poMap);
+            poMap = new UnsortedTurtlePredicateObjectMap();
+            unsortedTripleMap.put(st.getSubject(), poMap);
         }
 
-        TurtleObjectList oList = null;
+        UnsortedTurtleObjectList oList = null;
         if (poMap.containsKey(st.getPredicate())) {
             oList = poMap.get(st.getPredicate());
         } else {
-            oList = new TurtleObjectList();
+            oList = new UnsortedTurtleObjectList();
             poMap.put(st.getPredicate(), oList);
         }
 
@@ -708,7 +957,7 @@ public class SortedTurtleWriter extends RDFWriterBase {
 
         // Note subjects which are OWL ontologies, as the are handled before other subjects.
         if (st.getPredicate().equals(rdfType) && st.getObject().equals(owlOntology)) {
-            ontologies.add(st.getSubject());
+            unsortedOntologies.add(st.getSubject());
         }
     }
 
