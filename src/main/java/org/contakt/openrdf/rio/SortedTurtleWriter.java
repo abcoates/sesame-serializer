@@ -163,8 +163,21 @@ public class SortedTurtleWriter extends RDFWriterBase {
                     } else { // predicate keys are the same, so test object values
                         SortedTurtleObjectList values1 = map1.get(key1);
                         SortedTurtleObjectList values2 = map2.get(key2);
+                        SortedTurtleObjectList nonBlankValues1 = new SortedTurtleObjectList();
+                        SortedTurtleObjectList nonBlankValues2 = new SortedTurtleObjectList();
+                        // Leave blank nodes out of the value comparison.
+                        for (Value value : values1) {
+                            if (!(value instanceof BNode)) {
+                                nonBlankValues1.add(value);
+                            }
+                        }
+                        for (Value value : values2) {
+                            if (!(value instanceof BNode)) {
+                                nonBlankValues2.add(value);
+                            }
+                        }
                         if (tolc == null) { tolc = new TurtleObjectListComparator(); }
-                        cmp = tolc.compare(values1, values2, excludedList);
+                        cmp = tolc.compare(nonBlankValues1, nonBlankValues2, excludedList);
                         if (cmp != 0) {
                             return cmp;
                         } else { // values are the same, try the next predicates in the maps
@@ -194,14 +207,14 @@ public class SortedTurtleWriter extends RDFWriterBase {
         }
 
         public int compare(BNode bnode1, BNode bnode2, ArrayList<Object> excludedList) {
-            if ((bnode1 == null) || excludedList.contains(bnode1)) {
-                if ((bnode2 == null) || excludedList.contains(bnode2)) {
+            if ((bnode1 == null) || excludedList.contains(bnode1) || !unsortedTripleMap.containsKey(bnode1)) {
+                if ((bnode2 == null) || excludedList.contains(bnode2) || !unsortedTripleMap.containsKey(bnode2)) {
                     return 0; // two null/excluded blank nodes are equal
                 } else {
                     return -1; // null/excluded blank node comes before non-null/excluded blank node
                 }
             } else {
-                if ((bnode2 == null) || excludedList.contains(bnode2)) {
+                if ((bnode2 == null) || excludedList.contains(bnode2) || !unsortedTripleMap.containsKey(bnode2)) {
                     return 1; // non-null/excluded blank node comes before null/excluded blank node
                 } else {
                     if (bnode1 == bnode2) {
@@ -212,7 +225,13 @@ public class SortedTurtleWriter extends RDFWriterBase {
                         if (tpomc == null) { tpomc = new TurtlePredicateObjectMapComparator(); }
                         excludedList.add(bnode1);
                         excludedList.add(bnode2);
-                        return tpomc.compare(map1, map2, excludedList);
+                        int cmp = tpomc.compare(map1, map2, excludedList);
+                        if (cmp != 0) {
+                            return cmp;
+                        } else {
+                            // Nothing left to do but test string values
+                            return bnode1.stringValue().compareTo(bnode2.stringValue());
+                        }
                     }
                 }
             }
@@ -255,13 +274,65 @@ public class SortedTurtleWriter extends RDFWriterBase {
                                 return -1; // value1 comes before blank node value2.
                             } else { // compare non-blank-node values.
                                 // TODO: support natural ordering of non-string literals
-                                return value1.stringValue().compareTo(value2.stringValue());
+                                if ((value1 instanceof Literal) && (value2 instanceof Literal)) {
+                                    return compareSimpleValue((Literal)value1, (Literal)value2);
+                                } else {
+                                    return compareSimpleValue(value1, value2);
+                                }
                             }
                         }
                     }
                 }
             }
         }
+    }
+
+    private int compareSimpleValue(Literal literal1, Literal literal2) {
+        int cmp = literal1.stringValue().compareTo(literal2.stringValue());
+        if (cmp != 0) {
+            return cmp;
+        } else {
+            if (literal1.getLanguage() == null) {
+                if (literal2.getLanguage() == null) {
+                    if (literal1.getDatatype() == null) {
+                        if (literal2.getDatatype() == null) {
+                            return 0; // no language or data type difference
+                        } else {
+                            return 1; // literal1 with no data type comes after literal2 with data type
+                        }
+                    } else {
+                        if (literal2.getDatatype() == null) {
+                            return -1; // literal1 with data type comes before literal2 without data type
+                        } else {
+                            cmp = literal1.getDatatype().stringValue().compareTo(literal2.getDatatype().stringValue());
+                            if (cmp != 0) {
+                                return cmp; // datatypes are different
+                            } else {
+                                return 0; // no language or data type difference
+                            }
+                        }
+                    }
+                } else {
+                    return 1; // literal1 without language comes after literal2 with language
+                }
+            } else {
+                if (literal2.getLanguage() == null) {
+                    return -1; // literal1 with language comes after literal2 without language
+                } else {
+                    cmp = literal1.getLanguage().compareTo(literal2.getLanguage());
+                    if (cmp != 0) {
+                        return cmp; // languages are different
+                    } else {
+                        return 0; // no language or data type difference
+                    }
+                }
+            }
+        }
+    }
+
+    private int compareSimpleValue(Value value1, Value value2) {
+        // Use string comparison as the last option.
+        return value1.stringValue().compareTo(value2.stringValue());
     }
 
     /** An unsorted list of RDF object values. */
@@ -466,8 +537,14 @@ public class SortedTurtleWriter extends RDFWriterBase {
     /** Sorted list of subjects which are OWL ontologies, as they are rendered before other subjects. */
     private SortedTurtleResourceList sortedOntologies = null;
 
-    /** List of blank nodes which are objects of statements. */
-    private ArrayList<BNode> objectBlankNodes = null;
+    /** Unsorted list of blank nodes, as they are rendered separately from other nodes. */
+    private UnsortedTurtleResourceList unsortedBlankNodes = null;
+
+    /** Sorted list of blank nodes, as they are rendered separately from other nodes. */
+    private SortedTurtleResourceList sortedBlankNodes = null;
+
+    /** Map of serialisation names for blank nodes. */
+    private HashMap<BNode, String> blankNodeNameMap = null;
 
     /** Unsorted hash map containing triple data. */
     private UnsortedTurtleSubjectPredicateObjectMap unsortedTripleMap = null;
@@ -569,7 +646,8 @@ public class SortedTurtleWriter extends RDFWriterBase {
         output.setIndentationLevel(0);
         namespaceTable = new TreeMap<String, String>();
         unsortedOntologies = new UnsortedTurtleResourceList();
-        objectBlankNodes = new ArrayList<BNode>();
+        unsortedBlankNodes = new UnsortedTurtleResourceList();
+        blankNodeNameMap = new HashMap<BNode, String>();
         unsortedTripleMap = new UnsortedTurtleSubjectPredicateObjectMap();
     }
 
@@ -598,6 +676,30 @@ public class SortedTurtleWriter extends RDFWriterBase {
             // Sort triples, etc.
             sortedOntologies = unsortedOntologies.toSorted();
             sortedTripleMap = unsortedTripleMap.toSorted();
+            sortedBlankNodes = unsortedBlankNodes.toSorted();
+
+            // Create serialisation names for blank nodes.
+            StringBuilder blankNodeNamePaddingBuilder = new StringBuilder();
+            blankNodeNamePaddingBuilder.append("0");
+            int blankNodeCount = unsortedBlankNodes.size();
+            while (blankNodeCount > 9) {
+                blankNodeCount /= 10;
+                blankNodeNamePaddingBuilder.append("0");
+            }
+            String blankNodeNamePadding = blankNodeNamePaddingBuilder.toString();
+            int blankNodeIndex = 0;
+            for (Value value : sortedBlankNodes) {
+                if (value instanceof BNode) {
+                    BNode bnode = (BNode)value;
+                    blankNodeIndex++;
+                    String blankNodeName = Integer.toString(blankNodeIndex);
+                    if (blankNodeName.length() < blankNodeNamePadding.length()) {
+                        blankNodeName = blankNodeNamePadding.substring(0, blankNodeNamePadding.length() - blankNodeName.length()) + blankNodeName;
+                    }
+                    blankNodeName = "blank" + blankNodeName;
+                    blankNodeNameMap.put(bnode, blankNodeName);
+                }
+            }
 
             // Set up list of predicates that appear first under their subjects.
             firstPredicates = new ArrayList<URI>(); // predicates that are specially rendered first
@@ -676,10 +778,11 @@ public class SortedTurtleWriter extends RDFWriterBase {
                 }
             }
 
-            // Write out blank nodes that are subjects but not objects.
-            for (Resource subject : sortedTripleMap.keySet()) {
-                if ((subject instanceof BNode) && !objectBlankNodes.contains((BNode)subject)) {
-                    writeSubjectTriples(output, subject);
+            // Write out blank nodes that are subjects.
+            for (Resource resource : sortedBlankNodes) {
+                BNode bnode = (BNode)resource;
+                if (unsortedTripleMap.containsKey(bnode)) {
+                    writeSubjectTriples(output, bnode);
                 }
             }
 
@@ -709,7 +812,7 @@ public class SortedTurtleWriter extends RDFWriterBase {
         if (qname != null) {
             writeQName(out, qname);
         } else if (subject instanceof BNode) {
-            out.write("[]");
+            out.write("_:" + blankNodeNameMap.get((BNode)subject));
         } else {
             out.write("<" + subject.stringValue() + ">");
         }
@@ -823,30 +926,11 @@ public class SortedTurtleWriter extends RDFWriterBase {
     }
 
     private void writeObject(IndentingWriter out, BNode bnode) throws Exception {
-        out.write("[");
-        out.writeEOL();
-        out.increaseIndentation();
-
-        SortedTurtlePredicateObjectMap poMap = sortedTripleMap.get(bnode);
-
-        // Write predicate/object pairs rendered first.
-        for (URI predicate : firstPredicates) {
-            if (poMap.containsKey(predicate)) {
-                SortedTurtleObjectList values = poMap.get(predicate);
-                writePredicateAndObjectValues(out, predicate, values);
-            }
+        if (unsortedTripleMap.containsKey(bnode)) {
+            out.write("_:" + blankNodeNameMap.get(bnode) + " ");
+        } else {
+            out.write("[] ");
         }
-
-        // Write other predicate/object pairs.
-        for (URI predicate : poMap.keySet()) {
-            if (!firstPredicates.contains(predicate)) {
-                SortedTurtleObjectList values = poMap.get(predicate);
-                writePredicateAndObjectValues(out, predicate, values);
-            }
-        }
-
-        out.decreaseIndentation();
-        out.write("] ");
     }
 
     private void writeObject(IndentingWriter out, URI uri) throws Exception {
@@ -859,7 +943,7 @@ public class SortedTurtleWriter extends RDFWriterBase {
         } else if (literal.getLanguage() != null) {
             writeString(out, literal.stringValue());
             out.write("@" + literal.getLanguage() + " ");
-        } else if ((literal.getDatatype() != null) && !xsString.equals(literal.getDatatype())) { // RDF 1.1 assumes 'xs:string' by default as the datatype for strings
+        } else if (literal.getDatatype() != null) {
             writeString(out, literal.stringValue());
             out.write("^^");
             writeUri(out, literal.getDatatype());
@@ -950,14 +1034,19 @@ public class SortedTurtleWriter extends RDFWriterBase {
 
         if (!oList.contains(st.getObject())) {
             oList.add(st.getObject());
-            if (st.getObject() instanceof BNode) { // make a note of BNodes that are statement objects
-                objectBlankNodes.add((BNode) st.getObject());
-            }
         }
 
         // Note subjects which are OWL ontologies, as the are handled before other subjects.
         if (st.getPredicate().equals(rdfType) && st.getObject().equals(owlOntology)) {
             unsortedOntologies.add(st.getSubject());
+        }
+
+        // Note subjects & objects which are blank nodes.
+        if (st.getSubject() instanceof BNode) {
+            unsortedBlankNodes.add((BNode)st.getSubject());
+        }
+        if (st.getObject() instanceof BNode) {
+            unsortedBlankNodes.add((BNode)st.getObject());
         }
     }
 

@@ -18,6 +18,8 @@ import java.io.OutputStream;
  */
 public class RDFFormatter {
 
+    // TODO: add command-line option to set base URI
+
     private static final String SOURCE_FORMATS =
             "auto (select by filename) [default], " +
             "binary, " +

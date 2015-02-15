@@ -75,6 +75,7 @@ class SortedTurtleWriterSpec extends FlatSpec with Matchers {
       val factory = new TurtleWriterFactory()
       val turtleWriter = factory getWriter (outStream)
       val rdfFormat = Rio getParserFormatForFileName(sourceFile getName, RDFFormat.TURTLE)
+
       val inputModel = Rio parse (new FileReader(sourceFile), "", rdfFormat)
       Rio write (inputModel, turtleWriter)
       outStream flush ()
@@ -89,10 +90,20 @@ class SortedTurtleWriterSpec extends FlatSpec with Matchers {
     val outStream = new FileOutputStream(outputFile)
     val factory = new SortedTurtleWriterFactory()
     val turtleWriter = factory getWriter (outStream, baseUri, null)
+
     val inputModel = Rio parse (new FileReader(inputFile), baseUri stringValue, RDFFormat.TURTLE)
     Rio write (inputModel, turtleWriter)
     outStream flush ()
     outStream close ()
+
+    val outputFile2 = new File(outputDir2, outputFile getName)
+    val outStream2 = new FileOutputStream(outputFile2)
+    val turtleWriter2 = factory getWriter (outStream2, baseUri, null)
+
+    val inputModel2 = Rio parse (new FileReader(outputFile), baseUri stringValue, RDFFormat.TURTLE)
+    Rio write (inputModel2, turtleWriter2)
+    outStream2 flush ()
+    outStream2 close ()
   }
 
   it should "be able to produce a sorted Turtle file with blank object nodes" in {
@@ -100,12 +111,21 @@ class SortedTurtleWriterSpec extends FlatSpec with Matchers {
     val outputFile = new File(outputDir1, setFilePathExtension(inputFile getName, "ttl"))
     val outStream = new FileOutputStream(outputFile)
     val factory = new SortedTurtleWriterFactory()
-    val turtleWriter = factory getWriter (outStream)
+    val turtleWriter = factory getWriter outStream
 
     val inputModel = Rio parse (new FileReader(inputFile), "", RDFFormat.TURTLE)
     Rio write (inputModel, turtleWriter)
     outStream flush ()
     outStream close ()
+
+    val outputFile2 = new File(outputDir2, outputFile getName)
+    val outStream2 = new FileOutputStream(outputFile2)
+    val turtleWriter2 = factory getWriter (outStream2)
+
+    val inputModel2 = Rio parse (new FileReader(outputFile), "", RDFFormat.TURTLE)
+    Rio write (inputModel2, turtleWriter2)
+    outStream2 flush ()
+    outStream2 close ()
   }
 
   it should "be able to produce a sorted Turtle file with blank subject nodes" in {
@@ -119,6 +139,59 @@ class SortedTurtleWriterSpec extends FlatSpec with Matchers {
     Rio write (inputModel, turtleWriter)
     outStream flush ()
     outStream close ()
+
+    val outputFile2 = new File(outputDir2, outputFile getName)
+    val outStream2 = new FileOutputStream(outputFile2)
+    val turtleWriter2 = factory getWriter (outStream2)
+
+    val inputModel2 = Rio parse (new FileReader(outputFile), "", RDFFormat.TURTLE)
+    Rio write (inputModel2, turtleWriter2)
+    outStream2 flush ()
+    outStream2 close ()
+  }
+
+  it should "be able to produce a sorted Turtle file with directly recursive blank object nodes" in {
+    val inputFile = new File("src/test/resources/turtle/raw/turtle-example-14.ttl")
+    val outputFile = new File(outputDir1, setFilePathExtension(inputFile getName, "ttl"))
+    val outStream = new FileOutputStream(outputFile)
+    val factory = new SortedTurtleWriterFactory()
+    val turtleWriter = factory getWriter outStream
+
+    val inputModel = Rio parse (new FileReader(inputFile), "", RDFFormat.TURTLE)
+    Rio write (inputModel, turtleWriter)
+    outStream flush ()
+    outStream close ()
+
+    val outputFile2 = new File(outputDir2, outputFile getName)
+    val outStream2 = new FileOutputStream(outputFile2)
+    val turtleWriter2 = factory getWriter (outStream2)
+
+    val inputModel2 = Rio parse (new FileReader(outputFile), "", RDFFormat.TURTLE)
+    Rio write (inputModel2, turtleWriter2)
+    outStream2 flush ()
+    outStream2 close ()
+  }
+
+  it should "be able to produce a sorted Turtle file with indirectly recursive blank object nodes" in {
+    val inputFile = new File("src/test/resources/turtle/raw/turtle-example-26.ttl")
+    val outputFile = new File(outputDir1, setFilePathExtension(inputFile getName, "ttl"))
+    val outStream = new FileOutputStream(outputFile)
+    val factory = new SortedTurtleWriterFactory()
+    val turtleWriter = factory getWriter outStream
+
+    val inputModel = Rio parse (new FileReader(inputFile), "", RDFFormat.TURTLE)
+    Rio write (inputModel, turtleWriter)
+    outStream flush ()
+    outStream close ()
+
+    val outputFile2 = new File(outputDir2, outputFile getName)
+    val outStream2 = new FileOutputStream(outputFile2)
+    val turtleWriter2 = factory getWriter (outStream2)
+
+    val inputModel2 = Rio parse (new FileReader(outputFile), "", RDFFormat.TURTLE)
+    Rio write (inputModel2, turtleWriter2)
+    outStream2 flush ()
+    outStream2 close ()
   }
 
   it should "be able to read various RDF documents and write them in sorted Turtle format" in {
@@ -176,6 +249,59 @@ class SortedTurtleWriterSpec extends FlatSpec with Matchers {
       val contents1 = getFileContents(file)
       val contents2 = getFileContents(file2)
       assert(contents1 === contents2, s"match failed for file: ${file getAbsolutePath}")
+    }
+  }
+
+  it should "should not add/lose RDF triples when writing in Turtle format" in {
+    val rawTurtleDirectory = new File("src/test/resources/turtle/raw")
+    assert(rawTurtleDirectory isDirectory, "raw turtle directory is not a directory")
+    assert(rawTurtleDirectory exists, "raw turtle directory does not exist")
+
+    // Serialise sample files as sorted Turtle.
+    var fileCount = 0
+    for (sourceFile <- rawTurtleDirectory.listFiles()) {
+      System.err.println("read/write #1: " + sourceFile.getName); // TODO: remove debugging
+      fileCount += 1
+      val targetFile = new File(outputDir1, setFilePathExtension(sourceFile getName, "ttl"))
+      RDFFormatter run Array[String](
+        "-s", sourceFile getAbsolutePath,
+        "-t", targetFile getAbsolutePath
+      )
+    }
+
+    // Re-serialise the sorted files, again as sorted Turtle.
+    fileCount = 0
+    for (sourceFile <- outputDir1.listFiles()) {
+      System.err.println("read/write #2: " + sourceFile.getName); // TODO: remove debugging
+      fileCount += 1
+      val targetFile = new File(outputDir2, setFilePathExtension(sourceFile getName, "ttl"))
+      RDFFormatter run Array[String](
+        "-s", sourceFile getAbsolutePath,
+        "-t", targetFile getAbsolutePath
+      )
+    }
+
+    // Check that re-serialising the Turtle files has changed nothing.
+    fileCount = 0
+    for (file2 <- outputDir2.listFiles()) {
+      System.err.println("read/write #3: " + file2.getName); // TODO: remove debugging
+      fileCount += 1
+      val file = new File(outputDir1, file2 getName)
+      val contents1 = getFileContents(file)
+      val contents2 = getFileContents(file2)
+      assert(contents1 === contents2, s"match failed for file: ${file getAbsolutePath}")
+    }
+
+    // Check that the re-serialised Turtle file have the same triple count as the matching raw files
+    fileCount = 0
+    for (sourceFile <- rawTurtleDirectory.listFiles()) {
+      System.err.println("read/write #1: " + sourceFile.getName); // TODO: remove debugging
+      fileCount += 1
+      val targetFile = new File(outputDir2, setFilePathExtension(sourceFile getName, "ttl"))
+      val rdfFormat1 = Rio getParserFormatForFileName(sourceFile getName, RDFFormat.TURTLE)
+      val inputModel1 = Rio parse (new FileReader(sourceFile), "", rdfFormat1)
+      val inputModel2 = Rio parse (new FileReader(targetFile), "", RDFFormat.TURTLE)
+      assert(inputModel1.size() === inputModel2.size(), s"ingested triples do not match for: ${sourceFile.getName}")
     }
   }
 
